@@ -55,7 +55,7 @@ app.use(function (req, res, next) {
 app.use(cors());
 app.use(bodyParser.json());
 mongoose.connect(
-    'mongodb+srv://admin:1234@cluster0.zhkxjsf.mongodb.net/?retryWrites=true&w=majority'
+    'mongodb+srv://Usama:myxxx@cluster0.zhkxjsf.mongodb.net/?retryWrites=true&w=majority'
     , { useNewUrlParser: true });
 const connection = mongoose.connection;
 

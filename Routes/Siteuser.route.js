@@ -293,6 +293,81 @@ Siteroute.route('/adduser').post(function(req, res) {
         }
     });
 });
+
+Siteroute.route('/travel').post(function(req, res) {
+    console.log(req.body)
+    Siteuserd.findOne({ _id: req.body._id }, function(error, admin) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+        } else if (!admin) {
+            res.send('invalid');
+        } else {
+            // Check if the contact exists in the "contacts" array
+            const existingContact = admin.travel.find(contact => (contact.date === req.body.date&&contact.end==='-'));
+            if (existingContact) {
+                // Update the existing contact
+              
+                existingContact.end = req.body.end;
+
+
+                existingContact.coords = req.body.coords;
+            } else {
+                // Push a new contact
+                admin.travel.push({
+                   
+                    date:req.body.date,
+                    start:req.body.start,
+                    end:'-'
+
+                    
+                });
+            }
+                // Push a new contact
+              
+     
+
+            // Save the updated "Admin" document
+            admin.save(function(error2, success2) {
+                if (error2) {
+                    console.log(error2);
+                    res.send('error2');
+                } else {
+                    res.status(200).json({ 'Client': success2 });
+                }
+            });
+        }
+    });
+});
+
+Siteroute.route('/findtravel').post(function(req, res) {
+    console.log(req.body)
+    Siteuserd.findOne({ _id: req.body._id }, function(error, admin) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+        } else if (!admin) {
+            res.send('invalid');
+        } else {
+            // Check if the contact exists in the "contacts" array
+            const existingContact = admin.travel.find(contact => (contact.date === req.body.date&&contact.end==='-'));
+            if (existingContact) {
+                // Update the existing contact
+              
+                res.status(200).json({ 'travellog': true });
+            } else {
+                res.status(200).json({ 'travellog': false });
+            }
+                // Push a new contact
+              
+     
+
+            // Save the updated "Admin" document
+          
+        }
+    });
+});
+
 Siteroute.route('/viewed').post(function(req, res) {
     Siteuserd.findOne({ _id: req.body.sender }, function(error, admin) {
         if (error) {

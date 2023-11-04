@@ -86,6 +86,32 @@ imgurl2: {
     }
     ,
     
+
+    travel:[
+        
+        {
+            
+            coords: {
+                type: [
+                  [Number, Number] // An array of two numbers: [latitude, longitude]
+                ],
+                
+              }
+         
+   
+        ,date:{
+            type:String,
+        },
+        start:{
+            type:String,
+        },
+        end:{
+            type:String,
+        },
+
+    }
+        ],
+    
     addedusers:[
         
         {
