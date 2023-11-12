@@ -305,17 +305,21 @@ Siteroute.route('/travel').post(function(req, res) {
         } else {
             // Check if the contact exists in the "contacts" array
             const existingContact = admin.travel.find(contact => (contact.date === req.body.date&&contact.end==='-'));
-            if (existingContact) {
-                // Update the existing contact
+            console.log(existingContact)
+            if (existingContact&&req.body.coords) {
+
+                if(req.body.coords&&req.body.coords.length!==2000){
+  // Update the existing contact
+  existingContact.end = req.body.end;
+                }
               
-                existingContact.end = req.body.end;
 
 
-                existingContact.coords = req.body.coords;
+                existingContact.coords= [...req.body.coords,...existingContact.coords];
             } else {
                 // Push a new contact
                 admin.travel.push({
-                   
+                    coords:[],
                     date:req.body.date,
                     start:req.body.start,
                     end:'-'
@@ -330,7 +334,7 @@ Siteroute.route('/travel').post(function(req, res) {
             // Save the updated "Admin" document
             admin.save(function(error2, success2) {
                 if (error2) {
-                    console.log(error2);
+                 
                     res.send('error2');
                 } else {
                     res.status(200).json({ 'Client': success2 });
