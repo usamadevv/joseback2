@@ -1,17 +1,188 @@
 // Importing important Siteuserds
 const express = require('express');
+const stream = require('stream');
 const app = express();
 const Siteroute = express.Router();
+const admin = require("firebase-admin");
+const fileUpload = require('express-fileupload');
+const serviceAccount = require('../serviceaccount.json');
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: "gs://superstar-24f98.appspot.com"
+});
+var bucket = admin.storage().bucket();
+
 let Siteuserd = require('../Models/Siteuser');
 var nodemailer = require('nodemailer');
 
-
+app.use(fileUpload())
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'saleemjadoon766@gmail.com',
         pass: 'zyhqnhmthrzgbeys'
     }
+});
+
+
+  Siteroute.route('/uploadfile').post(function(req, res) {
+  
+   
+    console.log(req.body)
+    const uploadPicture = function() {
+        return new Promise((resolve, reject) => {
+     
+          let bufferStream = new stream.PassThrough();
+          bufferStream.end(new Buffer.from(req.body.image.replace('data:image/jpeg;base64,',''), 'base64'));
+      
+          // Retrieve default storage bucket
+        
+          // Create a reference to the new image file
+          const currentDate = new Date();
+          let file = bucket.file(`img/${currentDate.getTime().toString()}.jpg`);
+      
+          bufferStream.pipe(file.createWriteStream({
+            metadata: {
+              contentType: 'image/jpeg'
+            }
+          }))
+
+          
+          .on('error', error => {
+            reject(`news.provider#uploadPicture - Error while uploading picture ${JSON.stringify(error)}`);
+          })
+          .on('finish', (file) => {
+            // The file upload is complete.
+            console.log("news.provider#uploadPicture - Image successfully uploaded: ", JSON.stringify(file));
+          });
+
+          const config = {
+            action: 'read',
+            expires: '03-01-2500'
+          };
+          let downloadUrl = file.getSignedUrl(config, (error, url) => {
+            if (error) {
+              reject(error);
+            }
+            console.log('download url ', url);
+            Siteuserd.findByIdAndUpdate(
+                { _id:req.body._id}, 
+        
+                {
+                    imgurl:url
+        
+                },
+            
+               function (error, success) {
+                     if (error) {
+                        console.log(error)
+                        res.send('error')
+                     } else {
+                        if(!success){
+        
+                            res.send('invalid')
+                        }
+                        else{
+        
+                            res.status(200).json({'Siteuserd':url});
+                        }
+                        
+                     }
+                 }
+            
+              
+            )
+            resolve(url);
+          
+
+          });
+        })
+      };
+uploadPicture()
+
+
+    
+});
+Siteroute.route('/uploadcert').post(function(req, res) {
+  
+   
+    console.log(req.body)
+    const uploadPicture = function() {
+        return new Promise((resolve, reject) => {
+     
+          let bufferStream = new stream.PassThrough();
+          bufferStream.end(new Buffer.from(req.body.image.replace('data:image/jpeg;base64,',''), 'base64'));
+      
+          // Retrieve default storage bucket
+        
+          // Create a reference to the new image file
+          const currentDate = new Date();
+          let file = bucket.file(`img/${currentDate.getTime().toString()}.jpg`);
+      
+          bufferStream.pipe(file.createWriteStream({
+            metadata: {
+              contentType: 'image/jpeg'
+            }
+          }))
+
+          
+          .on('error', error => {
+            reject(`news.provider#uploadPicture - Error while uploading picture ${JSON.stringify(error)}`);
+          })
+          .on('finish', (file) => {
+            // The file upload is complete.
+            console.log("news.provider#uploadPicture - Image successfully uploaded: ", JSON.stringify(file));
+          });
+
+          const config = {
+            action: 'read',
+            expires: '03-01-2500'
+          };
+          let downloadUrl = file.getSignedUrl(config, (error, url) => {
+            if (error) {
+              reject(error);
+            }
+            console.log('download url ', url);
+            Siteuserd.findByIdAndUpdate(
+                { _id:req.body._id}, 
+                {$push:{
+                    ids:{
+                    idname:'Certificate',
+                    idurl:url
+                    }   
+                } 
+        
+                },
+            
+               function (error, success) {
+                     if (error) {
+                        console.log(error)
+                        res.send('error')
+                     } else {
+                        if(!success){
+        
+                            res.send('invalid')
+                        }
+                        else{
+        
+                            res.status(200).json({'Siteuserd':url});
+                        }
+                        
+                     }
+                 }
+            
+              
+            )
+            resolve(url);
+          
+
+          });
+        })
+      };
+uploadPicture()
+
+
+    
 });
 
 Siteroute.route('/update').post(function(req, res) {

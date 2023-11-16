@@ -9,7 +9,15 @@ const mongoose = require('mongoose');
 
 const PORT =  process.env.PORT || 4001;
 const path=require("path");
+app.use(bodyParser.json({limit: '35mb'}));
 
+    app.use(
+      bodyParser.urlencoded({
+        extended: true,
+        limit: '35mb',
+        parameterLimit: 50000,
+      }),
+    );
 const Userroute = require('./Routes/Users.route');
 const Attroute = require('./Routes/Att.route');
 const Projectroute = require('./Routes/Project.route');
@@ -27,7 +35,6 @@ const Invoiceroute = require('./Routes/Invoice.route');
 const Formroute = require('./Routes/Formdata');
 __dirname=path.resolve()
 app.use(express.static(path.join(__dirname,'./myapp/build')))
-
 app.use(cors({origin: '*'}));
 app.use(function (req, res, next) {
 
@@ -47,7 +54,6 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
-
 
 
 
