@@ -1046,15 +1046,19 @@ Siteroute.route('/updatecpr2').get(function(req, res) {
     
 });
 
-Siteroute.route('/updateuserhours').post(function(req, res) {
 
+
+Siteroute.route('/updateuserhours').post(function(req, res) {
+    var datec2=new Date()
+    var ustime2=datec2.toLocaleString("en-US", {timeZone: "America/New_York"})
+  
     const updateData = req.body.preparedata;
 console.log(req.body)
     // Create an array of update operations
     const updateOperations = updateData.map(item => ({
       updateOne: {
         filter: { _id: item.userid }, // Assuming your ID field is named _id
-        update: { $set: { hrs: Number(item.Hrs)+Number(item.Ot_Hrs),hrsweek:item.Date } },
+        update: { $set: { hrs: Number(item.Hrs)+Number(item.Ot_Hrs),hrsweek:ustime2.split(',')[0] } },
         upsert: false, // Set to true if you want to insert a new document if the ID doesn't exist
       },
     }));
