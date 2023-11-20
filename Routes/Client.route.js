@@ -108,7 +108,7 @@ console.log('Invoice added')
 });
 
 Clientroute.route('/update').post(function(req, res) {
-    console.log(req.body.weekno)
+    console.log(req.body)
     Client.findOneAndUpdate(
         { _id:req.body._id}, 
 
@@ -127,7 +127,11 @@ Clientroute.route('/update').post(function(req, res) {
                 reporttype:req.body.reporttype,  
                 weekno:req.body.weekno,
                 year:req.body.year,
-                filename:req.body.filename
+                filename:req.body.filename,
+
+                by:req.body.by,
+                created:req.body.created,
+
             }   
         } 
 

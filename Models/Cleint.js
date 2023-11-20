@@ -57,6 +57,16 @@ let Clientdata = new Schema({
         type: String
     },
     invoicedata: [{
+
+        by:{
+
+            type: String
+        },
+        created:{
+
+            type: String
+        },
+
 filename:{
 
     type: String
