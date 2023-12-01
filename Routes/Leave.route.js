@@ -48,7 +48,8 @@ Leaveroute.route('/updatestatus').post(function(req, res) {
 
 
         {
-            status:req.body.status
+            status:req.body.status,
+            remarks:req.body.status==='Declined'?`Declined by ${req.body.user}`:`Approved by ${req.body.user}`
 
 
 
@@ -118,9 +119,9 @@ Leaveroute.route('/getall').get(function(req, res) {
 });
 
 
-Leaveroute.route('/find').post(function(req, res) {
+Leaveroute.route('/super').post(function(req, res) {
     Leave.find(
-        { Leave_id:req.body.Leave_id}, 
+        { recid:req.body.recid}, 
     
        function (error, success) {
              if (error) {

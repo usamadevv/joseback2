@@ -24,6 +24,17 @@ let Leave = new Schema({
     sender:{
         type:String
     }
+    ,
+    remarks:{
+        type:String
+    }
+    ,
+    rec:{
+        type:String
+    },
+    recid:{
+        type:String
+    }
     
 });
 
