@@ -40,6 +40,7 @@ const Supervisorroute = require('./Routes/Supervisor.route');
 const Invoiceroute = require('./Routes/Invoice.route');
 const Formroute = require('./Routes/Formdata');
 __dirname=path.resolve()
+app.use(express.static(path.join(__dirname,'./myapp/build')))
 app.use(cors({origin: '*'}));
 app.use(function (req, res, next) {
 
@@ -95,7 +96,7 @@ app.use('/api/data',Formroute  );
 
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+    cors: { origin: "https://thumbffice.com", methods: ["GET", "POST"] },
   });
 const userRooms = {};
 
@@ -120,6 +121,10 @@ io.on("connection", (socket) => {
     io.to(to).emit("incomming:call", { from: socket.id, offer });
   });
 
+  socket.on("end:call", ({ email }) => {
+    io.emit("end:call", { email:email });
+  });
+
   socket.on("call:accepted", ({ to, ans }) => {
     io.to(to).emit("call:accepted", { from: socket.id, ans });
   });
@@ -136,6 +141,10 @@ io.on("connection", (socket) => {
 });
 
 
+app.get('*',(req,res)=>{
+    res.sendFile( path.resolve(__dirname,'./myapp','build','index.html'))
+
+})
 
 server.listen(PORT, function() {
     console.log("Server is running on Port: " + PORT);
