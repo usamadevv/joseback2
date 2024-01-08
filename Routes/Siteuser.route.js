@@ -1004,6 +1004,41 @@ Siteroute.route('/updateuserprofile').post(function(req, res) {
 
     
 });
+Siteroute.route('/removecert').post(function(req, res) {
+    console.log(req.body)
+    Siteuserd.findOneAndUpdate(
+        { _id:req.body._id}, 
+
+        {$pull:{
+            ids:{
+            idurl:req.body.idurl
+            }   
+        } 
+
+        },
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'User':'deleted'});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 
 Siteroute.route('/updatecpr2').get(function(req, res) {
 

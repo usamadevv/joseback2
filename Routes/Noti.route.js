@@ -43,8 +43,13 @@ Notiroute.route('/update').post(function(req, res) {
 });
 
 Notiroute.route('/add').post(function(req, res) {
-
-    let Nots = new Not(req.body);
+    var datec=new Date()
+    var ustime=datec.toLocaleString("en-US", {hour12:false,timeZone: "America/New_York"})
+   
+    
+var tr={message:req.body.message,time:ustime,idp:req.body.idp,type:req.body.type}
+    let Nots = new Not(tr);
+    
     Nots.save()
         .then(Not => {
             res.status(200).json({'Not': 'Not added successfully'});
