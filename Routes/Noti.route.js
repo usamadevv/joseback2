@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const Notiroute = express.Router();
 let Not = require('../Models/Not');
+let Siteuserd = require('../Models/Siteuser');
 var nodemailer = require('nodemailer');
 const date = require('date-and-time');
 
@@ -49,15 +50,42 @@ Notiroute.route('/add').post(function(req, res) {
     
 var tr={message:req.body.message,time:ustime,idp:req.body.idp,type:req.body.type}
     let Nots = new Not(tr);
+    Siteuserd.findByIdAndUpdate(
+        { _id:req.body.idp}, 
+
+        {
+            notification:'true',
+          
+          
+        },
     
-    Nots.save()
-        .then(Not => {
-            res.status(200).json({'Not': 'Not added successfully'});
-            
-        })
-        .catch(err => {
-          console.log("erer")
-        });
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+                    Nots.save()
+                    .then(Not => {
+                        res.status(200).json({'Not': 'Not added successfully'});
+                        
+                    })
+                    .catch(err => {
+                      console.log("erer")
+                    });
+                }
+                
+             }
+         }
+    
+      
+    )
+
+    
+   
 });
 
 

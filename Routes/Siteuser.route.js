@@ -237,6 +237,41 @@ Siteroute.route('/update').post(function(req, res) {
     
 });
 
+
+Siteroute.route('/notify').post(function(req, res) {
+    console.log(req.body.cpr)
+    Siteuserd.findByIdAndUpdate(
+        { _id:req.body.id}, 
+
+        {
+            notification:'false',
+          
+          
+        },
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteuserd':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
+
 Siteroute.route('/pass').post(function(req, res) {
     Siteuserd.findOneAndUpdate(
         { email:req.body.email}, 

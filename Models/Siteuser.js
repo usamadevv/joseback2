@@ -18,6 +18,7 @@ let Siteuser = new Schema({
             type:Number,
          
         }, 
+        
         timestamp: {
             type: Date,
             default: Date.now, // Set to the current date and time by default
@@ -32,7 +33,10 @@ let Siteuser = new Schema({
         type: String,
         
     },
-
+    notification:{
+        type:String,
+     
+    }, 
     hrs: {
         type: String,
         
