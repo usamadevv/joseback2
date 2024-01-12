@@ -10,6 +10,9 @@ let sitemodel = new Schema({
         type: String,
 
     },
+    radius:{
+        type:Number,
+    },
     
     weekend: {
         type: String,

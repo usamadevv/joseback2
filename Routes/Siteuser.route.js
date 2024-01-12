@@ -111,15 +111,23 @@ Siteroute.route('/uploadcert').post(function(req, res) {
         return new Promise((resolve, reject) => {
      
           let bufferStream = new stream.PassThrough();
-          bufferStream.end(new Buffer.from(req.body.image.replace('data:image/jpeg;base64,',''), 'base64'));
+          let bufferStream2 = new stream.PassThrough();
+          bufferStream.end(new Buffer.from(req.body.front.replace('data:image/jpeg;base64,',''), 'base64'));
+      bufferStream2.end(new Buffer.from(req.body.back.replace('data:image/jpeg;base64,',''), 'base64'));
       
           // Retrieve default storage bucket
         
           // Create a reference to the new image file
           const currentDate = new Date();
           let file = bucket.file(`img/${currentDate.getTime().toString()}.jpg`);
+          let file2 = bucket.file(`img/${currentDate.getTime().toString()}56.jpg`);
       
           bufferStream.pipe(file.createWriteStream({
+            metadata: {
+              contentType: 'image/jpeg'
+            }
+          }))
+       bufferStream2.pipe(file2.createWriteStream({
             metadata: {
               contentType: 'image/jpeg'
             }
@@ -139,40 +147,47 @@ Siteroute.route('/uploadcert').post(function(req, res) {
             expires: '03-01-2500'
           };
           let downloadUrl = file.getSignedUrl(config, (error, url) => {
+
+          let downloadUrl2 = file2.getSignedUrl(config, (errorn, urlx) => {
             if (error) {
-              reject(error);
-            }
-            console.log('download url ', url);
-            Siteuserd.findByIdAndUpdate(
-                { _id:req.body._id}, 
-                {$push:{
-                    ids:{
-                    idname:'Certificate',
-                    idurl:url
-                    }   
-                } 
-        
-                },
-            
-               function (error, success) {
-                     if (error) {
-                        console.log(error)
-                        res.send('error')
-                     } else {
-                        if(!success){
-        
-                            res.send('invalid')
-                        }
-                        else{
-        
-                            res.status(200).json({'Siteuserd':url});
-                        }
-                        
-                     }
-                 }
-            
+                reject(error);
+              }
+              console.log('download url ', url);
+  
+  
+              Siteuserd.findByIdAndUpdate(
+                  { _id:req.body._id}, 
+                  {$push:{
+                      ids:{
+                      idname:'Certificate',
+                      front:url,
+                      back:urlx,
+                      }   
+                  } 
+          
+                  },
               
-            )
+                 function (error, success) {
+                       if (error) {
+                          console.log(error)
+                          res.send('error')
+                       } else {
+                          if(!success){
+          
+                              res.send('invalid')
+                          }
+                          else{
+          
+                              res.status(200).json({'Siteuserd':url});
+                          }
+                          
+                       }
+                   }
+              
+                
+              )
+          })
+          
             resolve(url);
           
 
@@ -1046,7 +1061,7 @@ Siteroute.route('/removecert').post(function(req, res) {
 
         {$pull:{
             ids:{
-            idurl:req.body.idurl
+            front:req.body.idurl
             }   
         } 
 

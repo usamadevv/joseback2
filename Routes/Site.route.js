@@ -15,6 +15,7 @@ Jobsiteroute.route('/updatesite').post(function(req, res) {
             clientid: req.body.clientid,
 
             weekend: req.body.weekend,
+            radius: req.body.radius,
             sitename: req.body.sitename,
             no: req.body.no,
             address: req.body.address,

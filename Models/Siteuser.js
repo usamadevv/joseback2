@@ -153,7 +153,11 @@ imgurl2: {
 idname:{
     
     type: String
-},idurl:{
+},front:{
+    
+    type: String
+}
+,back:{
     
     type: String
 },
