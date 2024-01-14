@@ -567,6 +567,46 @@ Siteattroute.route('/findbyproject').post(function(req, res) {
 
     
 });
+Siteattroute.route('/fromto').post(function(req, res) {
+    console.log(req.body)
+    const fromDate = new Date(req.body.from);
+    const toDate = new Date(req.body.to);
+    const selectedJobsites = req.body.selectedjobsites || [];
+    const projectIds = selectedJobsites.map(site => site._id);
+
+    Siteatt.find(
+        { 
+            createdAt: {
+                $gte: fromDate,
+                $lte: toDate,
+              },
+              projectid: {
+                $in: projectIds,
+              },
+        }, 
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteatt':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 Siteattroute.route('/findcattuser').post(function(req, res) {
     Siteatt.find(
         { date:req.body.date,
