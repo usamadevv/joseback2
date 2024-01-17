@@ -90,6 +90,40 @@ Supervisorroute.route('/login2').post(function(req, res) {
     
 });
 
+Supervisorroute.route('/notify').post(function(req, res) {
+
+    Supervisor.findByIdAndUpdate(
+        { _id:req.body.id}, 
+
+        {
+            notification:'false',
+          
+          
+        },
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'super':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
+
 Supervisorroute.route('/adduser').post(function(req, res) {
     console.log(req.body)
     Supervisor.findOne({ _id: req.body.sender }, function(error, admin) {

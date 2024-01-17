@@ -43,38 +43,52 @@ Siteattroute.route('/update').post(function(req, res) {
 });
 
 Siteattroute.route('/updatetask').post(function(req, res) {
-    Siteatt.findByIdAndUpdate(
-        { _id:req.body._id}, 
+    const siteAttId = req.body._id;
 
-        {
-            task:req.body.task,
-
-
-
-        },
-    
-       function (error, success) {
-             if (error) {
-                res.send('error')
-             } else {
-                if(!success){
-
-                    res.send('invalid')
+    // First, update the tasks with end:'-'
+    Siteatt.updateOne(
+        { _id: siteAttId, 'tasks.end': '-' },
+        { $set: { 'tasks.$.end': req.body.end } },
+        function (error, updateResult) {
+            if (error) {
+                console.error(error);
+                res.send('error');
+            } else {
+                // Second, push the new object
+                Siteatt.findByIdAndUpdate(
+                    siteAttId,
+                    {
+                        $push: {
+                            tasks: {
+                    taskno:req.body.taskno,
+                    start:req.body.start,
+                    end:'-',
+                    task:req.body.task
                 }
-                else{
-
-                    res.status(200).json({'Siteatt':success});
-                }
-                
-             }
-         }
-    
-      
-    )
-    
-
-    
+                        }
+                    },
+                    { new: true },
+                    function (error, success) {
+                        if (error) {
+                            console.error(error);
+                            res.send('error');
+                        } else {
+                            if (!success) {
+                                
+                            console.error('invalied');
+                                res.send('invalid');
+                            } else {
+                                console.error('invalieds');
+                                res.status(200).json({ 'Siteatt': success });
+                            }
+                        }
+                    }
+                );
+            }
+        }
+    );
 });
+
 
 Siteattroute.route('/updateptime').post(function(req, res) {
     Siteatt.findOneAndUpdate(
@@ -369,6 +383,36 @@ Siteattroute.route('/findbydate').post(function(req, res) {
                     res.send('invalid')
                 }
                 else{
+
+                    res.status(200).json({'Siteatt':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
+Siteattroute.route('/findbydateandleave').post(function(req, res) {
+    console.log(req.body.date+'k')
+    Siteatt.find(
+        { date:req.body.date,
+            status:'Leave'
+        }, 
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+                    console.log(success)
 
                     res.status(200).json({'Siteatt':success});
                 }

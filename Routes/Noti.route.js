@@ -8,7 +8,36 @@ var nodemailer = require('nodemailer');
 const date = require('date-and-time');
 
 
+Notiroute.route('/deleteall').post(function(req, res) {
+    console.log(req.body)
+    var ids= req.body.ids
+    ids.shift()
+    Not.deleteMany(
+        { _id:{ $in: ids }}, 
+    
+       function (error, success) {
+             if (error) {
+                console.log(error)
+                res.send(error)
+             } else {
+                if(!success){
 
+                    res.send('invalid')
+                }
+                else{
+                    console.log('s')
+                    res.status(200).json({'Delete':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 Notiroute.route('/update').post(function(req, res) {
     Not.findByIdAndUpdate(
         { _id:req.body._id}, 

@@ -5,6 +5,9 @@ const Leaveroute = express.Router();
 let Leave = require('../Models/Leave');
 var nodemailer = require('nodemailer');
 
+let Siteatt = require('../Models/siteatt');
+
+let Supervisor = require('../Models/Supervisor');
 
 
 Leaveroute.route('/update').post(function(req, res) {
@@ -43,8 +46,29 @@ Leaveroute.route('/update').post(function(req, res) {
 });
 
 Leaveroute.route('/updatestatus').post(function(req, res) {
+    function getDatesInRange(startDateStr, endDateStr) {
+        const startDate = new Date(startDateStr);
+        const endDate = new Date(endDateStr);
+        const datesArray = [];
+      
+        // Iterate through the dates and add them to the array
+        for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+          const formattedDate = currentDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+          datesArray.push(formattedDate);
+        }
+      
+        return datesArray;
+      }
+      
+   
+      const result = getDatesInRange(req.body.id.date, req.body.id.to?req.body.id.to:req.body.id.to);
+   
+     
+
+
+
     Leave.findByIdAndUpdate(
-        { _id:req.body.id},
+        { _id:req.body.id._id},
 
 
         {
@@ -64,8 +88,31 @@ Leaveroute.route('/updatestatus').post(function(req, res) {
                     res.send('invalid')
                 }
                 else{
+if(req.body.status==='Approved'){
+    console.log(result);
+    const savePromises = result.map(datea => {
+        const Attdate = { date: datea,time:'00:00:00',chkouttime:'00:00:00',user:req.body.id.username,
+    userid:req.body.id.sender,empno:'',projectid:'-',projectname:'-',workinghours:'-',late:'-',status:'Leave',tasks:[],
+    }; // Use spread operator to copy req.body and update the date
+        const Siteat = new Siteatt(Attdate);
+        return Siteat.save();
+    });
+ // Wait for all Promises to resolve
+Promise.all(savePromises)
+.then(() => {
+res.status(200).json({ 'Leave': 'Leaves added successfully' });
+})
+.catch(err => {
+console.error(err);
+res.status(500).json({ 'error': 'Internal Server Error' });
+});
+}
+else{
 
-                    res.status(200).json({'Leave':success});
+    res.status(200).json({'Leave':success});
+}
+                   
+
                 }
                 
              }
@@ -83,7 +130,37 @@ Leaveroute.route('/add').post(function(req, res) {
     let Leaves = new Leave(req.body);
     Leaves.save()
         .then(Leave => {
-            res.status(200).json({'Leave': 'Leave added successfully'});
+
+
+            Supervisor.findByIdAndUpdate(
+                { _id:req.body.recid}, 
+        
+                {
+                    notification:'true',
+                  
+                  
+                },
+            
+               function (error, success2) {
+                     if (error) {
+                        res.send('error')
+                     } else {
+                        if(!success2){
+        
+                            res.send('invalid')
+                        }
+                        else{
+                          
+            
+                            res.status(200).json({'Leave': 'Leave added successfully'});
+                        }
+                        
+                     }
+                 }
+            
+              
+            )
+        
         })
         .catch(err => {
           console.log("erer")
@@ -132,8 +209,36 @@ Leaveroute.route('/super').post(function(req, res) {
                     res.send('invalid')
                 }
                 else{
-
+                    
+                    Supervisor.findByIdAndUpdate(
+                        { _id:req.body.recid}, 
+                
+                        {
+                            notification:'false',
+                          
+                          
+                        },
+                    
+                       function (error, success2) {
+                             if (error) {
+                                res.send('error')
+                             } else {
+                                if(!success2){
+                
+                                    res.send('invalid')
+                                }
+                                else{
+                                  
                     res.status(200).json({'Leave':success});
+                                }
+                                
+                             }
+                         }
+                    
+                      
+                    )
+                
+
                 }
                 
              }

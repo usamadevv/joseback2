@@ -16,8 +16,10 @@ let Leave = new Schema({
     },
     date:{
         type:String
-    }
-    ,
+    },
+    to:{
+        type:String,
+    },
     status: {
         type: String
     },

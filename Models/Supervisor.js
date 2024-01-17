@@ -26,7 +26,10 @@ let Sueprvisor = new Schema({
         
     }
     ,
-
+    notification:{
+        type:String,
+     
+    }, 
    
     imgurl: {
         type: String,

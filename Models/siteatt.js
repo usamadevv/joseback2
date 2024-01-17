@@ -12,8 +12,7 @@ let Siteatten = new Schema({
     
     userid: {
         type: String
-    }
-    ,
+    },
     empno: {
         type: String
     }
@@ -43,7 +42,26 @@ let Siteatten = new Schema({
         type:String,
     },
 
-    
+    tasks:[
+        {
+        task:{
+        
+            type:String,
+        },
+        start:{
+        
+            type:String,
+        },
+        end:{
+        
+            type:String,
+        },
+        taskno:{
+        
+            type:String,
+        },
+    }
+    ],
     task:{
         
         type:String,
