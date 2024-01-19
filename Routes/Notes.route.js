@@ -43,6 +43,42 @@ Noteroute.route('/update').post(function(req, res) {
 });
 
 
+Noteroute.route('/hidefrom').post(function(req, res) {
+    console.log(req.body)
+    Notes.findByIdAndUpdate(
+        { _id:req.body.id}, 
+        {
+            $push: {
+                hidepart:  req.body.from
+            }
+        },
+        { new: true },
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+                    console.log(success)
+
+                    res.status(200).json({'Notes':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
+
+
 Noteroute.route('/delete').post(function(req, res) {
     console.log(req.body)
     var ids= req.body.ids
@@ -163,6 +199,7 @@ Notes.find(
                     res.send('invalid')
                 }
                 else{
+                    console.log(success)
 
                     res.status(200).json({'Notes':success});
                 }

@@ -34,6 +34,10 @@ let Note = new Schema({
     seen: {
         type: String
     },
+
+    hidepart: {
+        type: Array
+    },
     
 });
 

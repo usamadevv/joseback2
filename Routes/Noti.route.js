@@ -27,6 +27,7 @@ Notiroute.route('/deleteall').post(function(req, res) {
                 else{
                     console.log('s')
                     res.status(200).json({'Delete':success});
+                    
                 }
                 
              }
