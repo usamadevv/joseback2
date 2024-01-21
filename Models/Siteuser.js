@@ -33,6 +33,15 @@ let Siteuser = new Schema({
         type: String,
         
     },
+    supermode:{
+      type:String,
+    },
+    superallow:{
+      type:String,
+            },
+            supersite:{
+                type:String,
+              },
     notification:{
         type:String,
      
@@ -46,9 +55,6 @@ let Siteuser = new Schema({
         type: String,
         
     },
-   
-  
-   
     cpr: {
         type: String,
         
@@ -62,16 +68,12 @@ let Siteuser = new Schema({
         type: String,
         
     },
-    
-   
 imgurl: {
         type: String,
         
     },
-     
 imgurl2: {
     type: String,
-    
 },
     email:{
 

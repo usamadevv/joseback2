@@ -45,8 +45,8 @@ Noteroute.route('/update').post(function(req, res) {
 
 Noteroute.route('/hidefrom').post(function(req, res) {
     console.log(req.body)
-    Notes.findByIdAndUpdate(
-        { _id:req.body.id}, 
+    Notes.updateMany(
+        { _id:{ $in: req.body.id }}, 
         {
             $push: {
                 hidepart:  req.body.from

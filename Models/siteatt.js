@@ -87,7 +87,11 @@ let Siteatten = new Schema({
         type:Number
     }
     ,
-    
+   
+    duration:{
+        type:String
+    }
+    ,
     late:{
         type:String
     }

@@ -220,6 +220,9 @@ Siteroute.route('/update').post(function(req, res) {
             status:req.body.status,
             client:req.body.client,
             idno:req.body.idno,
+            superallow:req.body.superallow,
+            supermode:req.body.supermode,
+            supersite:req.body.supersite,
             email:req.body.email,
             password:req.body.password,
 
@@ -775,6 +778,32 @@ Siteroute.route('/find').post(function(req, res) {
 
     
 });
+Siteroute.route('/super').get(function(req, res) {
+    Siteuserd.find(
+        {supermode:'true'}, 
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteuserd':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 
 
 Siteroute.route('/findone').post(function(req, res) {
@@ -1172,6 +1201,38 @@ Siteroute.route('/updatecpr').post(function(req, res) {
         {
            
             cprapply:req.body.cprapply
+
+        },
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteuserd':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
+Siteroute.route('/changemode').post(function(req, res) {
+    Siteuserd.findOneAndUpdate(
+        { _id:req.body._id}, 
+
+        {
+           
+            superallow:req.body.mode
 
         },
     
