@@ -92,6 +92,7 @@ if(req.body.status==='Approved'){
     console.log(result);
     const savePromises = result.map(datea => {
         const Attdate = { date: datea,time:'00:00:00',chkouttime:'00:00:00',user:req.body.id.username,
+        duration:`${req.body.id.date} - ${req.body.id.to}`,
     userid:req.body.id.sender,empno:'',projectid:'-',projectname:'-',workinghours:'-',late:'-',status:'Leave',tasks:[],
     }; // Use spread operator to copy req.body and update the date
         const Siteat = new Siteatt(Attdate);
@@ -147,8 +148,6 @@ Leaveroute.route('/add').post(function(req, res) {
                      } else {
                         if(!success2){
         
-
-
                             res.send('invalid')
                         }
                         else{
