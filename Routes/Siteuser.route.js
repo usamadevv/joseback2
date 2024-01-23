@@ -791,7 +791,7 @@ Siteroute.route('/super').get(function(req, res) {
                     res.send('invalid')
                 }
                 else{
-
+console.log(success)
                     res.status(200).json({'Siteuserd':success});
                 }
                 

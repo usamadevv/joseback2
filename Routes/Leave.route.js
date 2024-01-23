@@ -7,7 +7,7 @@ var nodemailer = require('nodemailer');
 
 let Siteatt = require('../Models/siteatt');
 
-let Supervisor = require('../Models/Supervisor');
+let Siteuserd = require('../Models/Siteuser');
 
 
 Leaveroute.route('/update').post(function(req, res) {
@@ -132,7 +132,7 @@ Leaveroute.route('/add').post(function(req, res) {
         .then(Leave => {
 
 
-            Supervisor.findByIdAndUpdate(
+            Siteuserd.findByIdAndUpdate(
                 { _id:req.body.recid}, 
         
                 {
@@ -147,6 +147,8 @@ Leaveroute.route('/add').post(function(req, res) {
                      } else {
                         if(!success2){
         
+
+
                             res.send('invalid')
                         }
                         else{
@@ -210,7 +212,7 @@ Leaveroute.route('/super').post(function(req, res) {
                 }
                 else{
                     
-                    Supervisor.findByIdAndUpdate(
+                    Siteuserd.findByIdAndUpdate(
                         { _id:req.body.recid}, 
                 
                         {
