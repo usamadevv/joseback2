@@ -869,6 +869,8 @@ Siteroute.route('/login').post(function(req, res) {
     
        function (error, success) {
              if (error) {
+
+              console.log(error)
                 res.send('error')
              } else {
                 if(!success){
@@ -876,6 +878,7 @@ Siteroute.route('/login').post(function(req, res) {
                     res.send('invalid')
                 }
                 else{
+                  console.log(success)
 
                     res.status(200).json({'Siteuserd':success});
                 }
