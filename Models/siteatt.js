@@ -13,6 +13,9 @@ let Siteatten = new Schema({
     userid: {
         type: String
     },
+    coords: {
+        type: String
+    },
     empno: {
         type: String
     }

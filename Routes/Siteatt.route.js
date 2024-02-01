@@ -246,6 +246,7 @@ Siteattroute.route('/add').post(function(req, res) {
             
         })
         .catch(err => {
+            console.log(err)
           console.log("erer")
         });
 });
