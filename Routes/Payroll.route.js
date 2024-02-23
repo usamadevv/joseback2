@@ -1,23 +1,15 @@
-// Importing important Clients
+// Importing important Payrolls
 const express = require('express');
 const app = express();
-const Clientroute = express.Router();
-let Client = require('../Models/Cleint');
+const Payrollroute = express.Router();
+let Payroll = require('../Models/Payroll');
 var nodemailer = require('nodemailer');
-const fs = require('fs');
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'saleemjadoon7666@gmail.com',
-        pass: 'qjuljgycnglhkkmv'
-    }
-});
-const path = require('path');
 
 
-Clientroute.route('/update2').post(function(req, res) {
+
+Payrollroute.route('/update2').post(function(req, res) {
     console.log(req.body.weekno)
-    Client.findOneAndUpdate(
+    Payroll.findOneAndUpdate(
         { _id:req.body._id,'invoicedata.weekno': req.body.weekno, // Specify the condition to match the element within the array
         'invoicedata.year': req.body.year}, 
 
@@ -48,7 +40,7 @@ Clientroute.route('/update2').post(function(req, res) {
              } else {
                 if(!success){
 console.log('Invoice added')
-                    Client.findOneAndUpdate(
+                    Payroll.findOneAndUpdate(
                         { _id:req.body._id}, 
                 
                         {$push:{
@@ -82,7 +74,7 @@ console.log('Invoice added')
                                 }
                                 else{
                 
-                                    res.status(200).json({'Client':success2});
+                                    res.status(200).json({'Payroll':success2});
                                 }
                                 
                              }
@@ -101,7 +93,7 @@ console.log('Invoice added')
                 }
                 else{
                     console.log('Invoice updated')
-                    res.status(200).json({'Client':'updated'});
+                    res.status(200).json({'Payroll':'updated'});
                 }
                 
              }
@@ -115,9 +107,9 @@ console.log('Invoice added')
     
 });
 
-Clientroute.route('/update').post(function(req, res) {
+Payrollroute.route('/update').post(function(req, res) {
     console.log(req.body)
-    Client.findOneAndUpdate(
+    Payroll.findOneAndUpdate(
         { _id:req.body._id}, 
 
         {$push:{
@@ -155,7 +147,7 @@ Clientroute.route('/update').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success2});
+                    res.status(200).json({'Payroll':success2});
                 }
                 
              }
@@ -170,9 +162,9 @@ Clientroute.route('/update').post(function(req, res) {
     
 });
 
-Clientroute.route('/updatedata').post(function(req, res) {
+Payrollroute.route('/updatedata').post(function(req, res) {
     console.log(req.body)
-    Client.findOneAndUpdate(
+    Payroll.findOneAndUpdate(
         { _id:req.body._id}, 
 
        
@@ -201,7 +193,7 @@ Clientroute.route('/updatedata').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -214,9 +206,43 @@ Clientroute.route('/updatedata').post(function(req, res) {
     
 });
 
+Payrollroute.route('/updatestatus').post(function(req, res) {
+    console.log(req.body)
+    Payroll.findOneAndUpdate(
+        { _id:req.body._id}, 
 
-Clientroute.route('/updatefunds').post(function(req, res) {
-    Client.findOneAndUpdate(
+       
+       {
+        
+       status:req.body.status       
+       }
+        ,
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Payroll':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
+
+Payrollroute.route('/updatefunds').post(function(req, res) {
+    Payroll.findOneAndUpdate(
         { _id:req.body.id,'invoicedata._id':req.body.subid}, 
 
         
@@ -243,7 +269,7 @@ Clientroute.route('/updatefunds').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -256,12 +282,12 @@ Clientroute.route('/updatefunds').post(function(req, res) {
     
 });
 
-Clientroute.route('/add').post(function(req, res) {
+Payrollroute.route('/add').post(function(req, res) {
 
-    let Clients = new Client(req.body);
-    Clients.save()
-        .then(Client => {
-            res.status(200).json({'Client': 'Client added successfully'});
+    let Payrolls = new Payroll(req.body);
+    Payrolls.save()
+        .then(Payroll => {
+            res.status(200).json({'Payroll': 'Payroll added successfully'});
         })
         .catch(err => {
           console.log("erer")
@@ -269,9 +295,9 @@ Clientroute.route('/add').post(function(req, res) {
 });
 
 
-Clientroute.route('/getall').get(function(req, res) {
+Payrollroute.route('/getall').get(function(req, res) {
 
-    Client.find(
+    Payroll.find(
         { }, 
 
        
@@ -286,7 +312,7 @@ Clientroute.route('/getall').get(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -295,9 +321,9 @@ Clientroute.route('/getall').get(function(req, res) {
       
     )
 });
-Clientroute.route('/inactive').get(function(req, res) {
+Payrollroute.route('/inactive').get(function(req, res) {
 
-    Client.find(
+    Payroll.find(
         { status:'Inactive'}, 
 
        
@@ -312,7 +338,7 @@ Clientroute.route('/inactive').get(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -322,9 +348,9 @@ Clientroute.route('/inactive').get(function(req, res) {
     )
 });
 
-Clientroute.route('/active').get(function(req, res) {
+Payrollroute.route('/active').get(function(req, res) {
 
-    Client.find(
+    Payroll.find(
         { status:'Active'}, 
 
        
@@ -339,7 +365,7 @@ Clientroute.route('/active').get(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -350,10 +376,10 @@ Clientroute.route('/active').get(function(req, res) {
 });
 
 
-Clientroute.route('/find').post(function(req, res) {
+Payrollroute.route('/find').post(function(req, res) {
     console.log(req.body)
-    Client.find(
-        { _id:req.body.Client_id}, 
+    Payroll.find(
+        { _id:req.body.Payroll_id}, 
     
        function (error, success) {
              if (error) {
@@ -365,7 +391,7 @@ Clientroute.route('/find').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -378,9 +404,9 @@ Clientroute.route('/find').post(function(req, res) {
     
 });
 
-Clientroute.route('/findbyid').post(function(req, res) {
-    Client.find(
-        { _id:req.body.Client_id}, 
+Payrollroute.route('/findbyid').post(function(req, res) {
+    Payroll.find(
+        { _id:req.body.Payroll_id}, 
     
        function (error, success) {
              if (error) {
@@ -392,7 +418,7 @@ Clientroute.route('/findbyid').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -406,8 +432,8 @@ Clientroute.route('/findbyid').post(function(req, res) {
 });
 
 
-Clientroute.route('/findbyname').post(function(req, res) {
-    Client.find(
+Payrollroute.route('/findbyname').post(function(req, res) {
+    Payroll.find(
         { username:req.body.name}, 
     
        function (error, success) {
@@ -420,7 +446,7 @@ Clientroute.route('/findbyname').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -433,48 +459,8 @@ Clientroute.route('/findbyname').post(function(req, res) {
     
 });
 
-
-Clientroute.route('/sendinvoice').post(function(req, res) {
-
-console.log(req.body)
-   
-        const invoiceHTML = req.body.html;
-        const invoiceFilePath =  path.join(__dirname, 'invoices', `${req.body.key}.html`);
-    
-        fs.writeFile(invoiceFilePath, invoiceHTML, (err) => {
-            if (err) {
-                console.error(err);
-                res.status(500).json({ error: 'Failed to save invoice' });
-            } else {
-                const mailOptions = {
-                    from: 'Company invoice', // sender address
-                    to: req.body.email, // list of receivers
-                    subject: `New invoice received`, // Subject line
-                    html: `<a href='https://thumbffice.netlify.app/file/${req.body.key}'>View Invoice</a>`// plain text body
-                };
-            
-                transporter.sendMail(mailOptions, function (err, info) {
-                    if(err){
-                        console.log(err)
-                            res.status(200).json({'Siteuserd':'fail'});}
-                    else{
-                        console.log(info);
-                        
-                res.status(200).json({'Siteuserd':'emailok'});}
-                })
-                res.json({ message: 'Invoice saved successfully' });
-            }
-        });
- 
-
-
- 
-    
-});
-
-
-Clientroute.route('/findbyemail').post(function(req, res) {
-    Client.find(
+Payrollroute.route('/findbyemail').post(function(req, res) {
+    Payroll.find(
         { email:req.body.email}, 
     
        function (error, success) {
@@ -487,7 +473,7 @@ Clientroute.route('/findbyemail').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -500,10 +486,10 @@ Clientroute.route('/findbyemail').post(function(req, res) {
     
 });
 
-Clientroute.route('/delete').post(function(req, res) {
+Payrollroute.route('/delete').post(function(req, res) {
     console.log(req.body)
     var ids= req.body.ids
-    Client.deleteMany(
+    Payroll.deleteMany(
         { _id:{ $in: ids }}, 
     
        function (error, success) {
@@ -516,7 +502,7 @@ Clientroute.route('/delete').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -530,10 +516,10 @@ Clientroute.route('/delete').post(function(req, res) {
 });
 
 
-Clientroute.route('/deletedata').post(function(req, res) {
+Payrollroute.route('/deletedata').post(function(req, res) {
     console.log(req.body)
     var ids= req.body.ids
-    Client.deleteMany(
+    Payroll.deleteMany(
         { _id:{ $in: ids }}, 
     
        function (error, success) {
@@ -546,7 +532,7 @@ Clientroute.route('/deletedata').post(function(req, res) {
                 }
                 else{
 
-                    res.status(200).json({'Client':success});
+                    res.status(200).json({'Payroll':success});
                 }
                 
              }
@@ -569,4 +555,4 @@ Clientroute.route('/deletedata').post(function(req, res) {
 
 
 
-module.exports = Clientroute;
+module.exports = Payrollroute;

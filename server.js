@@ -32,6 +32,7 @@ const Noteroute = require('./Routes/Notes.route');
 const Siteroute = require('./Routes/Siteuser.route');
 const Jobsiteroute = require('./Routes/Site.route');
 const Clientroute = require('./Routes/Client.route');
+const Payrollroute = require('./Routes/Payroll.route');
 const Skillsroute = require('./Routes/Skills.route');
 const Siteattroute = require('./Routes/Siteatt.route');
 const Notiroute = require('./Routes/Noti.route');
@@ -92,6 +93,7 @@ app.use('/api/admin',Adminroute  );
 app.use('/api/super',Supervisorroute  );
 app.use('/api/invoice',Invoiceroute  );
 app.use('/api/data',Formroute  );
+app.use('/api/payroll',Payrollroute  );
 
 
 const server = http.createServer(app);

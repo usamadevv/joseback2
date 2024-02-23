@@ -56,6 +56,22 @@ let Clientdata = new Schema({
     pending: {
         type: String
     },
+    depts: [{
+
+        email:{
+
+            type: String
+        },
+        dept:{
+
+            type: String
+        },
+        password:{
+
+            type: String
+        },
+    }],
+
     invoicedata: [{
 
         by:{

@@ -10,8 +10,8 @@ var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'saleemjadoon766@gmail.com',
-        pass: 'zyhqnhmthrzgbeys'
+        user: 'saleemjadoon7666@gmail.com',
+        pass: 'qjuljgycnglhkkmv'
     }
 });
 // Your AccountSID and Auth Token from console.twilio.com
