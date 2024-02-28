@@ -40,6 +40,7 @@ const Adminroute = require('./Routes/Admin.route');
 const Supervisorroute = require('./Routes/Supervisor.route');
 const Invoiceroute = require('./Routes/Invoice.route');
 const Formroute = require('./Routes/Formdata');
+const Taskroute = require('./Routes/Task.route');
 __dirname=path.resolve()
 app.use(express.static(path.join(__dirname,'./myapp/build')))
 app.use(cors({origin: '*'}));
@@ -94,6 +95,7 @@ app.use('/api/super',Supervisorroute  );
 app.use('/api/invoice',Invoiceroute  );
 app.use('/api/data',Formroute  );
 app.use('/api/payroll',Payrollroute  );
+app.use('/api/task',Taskroute  );
 
 
 const server = http.createServer(app);

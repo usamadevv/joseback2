@@ -48,7 +48,16 @@ Siteattroute.route('/updatetask').post(function(req, res) {
     // First, update the tasks with end:'-'
     Siteatt.updateOne(
         { _id: siteAttId, 'tasks.end': '-' },
-        { $set: { 'tasks.$.end': req.body.end } },
+        { 
+            
+            
+            $set: { 
+                
+                
+                'tasks.$.end': req.body.end,
+                task:req.body.task
+            
+            } },
         function (error, updateResult) {
             if (error) {
                 console.error(error);
