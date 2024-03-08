@@ -115,6 +115,9 @@ imgurl2: {
         end:{
             type:String,
         },
+        distance:{
+            type:String,
+        },
 
     }
         ],

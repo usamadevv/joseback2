@@ -6,6 +6,8 @@ const Siteroute = express.Router();
 const admin = require("firebase-admin");
 const fileUpload = require('express-fileupload');
 const serviceAccount = require('../serviceaccount.json');
+const https = require('https');
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     storageBucket: "gs://superstar-24f98.appspot.com"
@@ -517,10 +519,29 @@ Siteroute.route('/adduser').post(function(req, res) {
         }
     });
 });
-
+const getEquallySpacedIndexes = (length) => {
+    // Calculate the step size to ensure that we have 10 equally spaced indexes
+    const step = Math.max(Math.floor(length / 10), 1);
+  
+    // Initialize an array to store the selected indexes
+    const indexes = [];
+  
+    // Push the first index
+    indexes.push(0);
+  
+    // Push the equally spaced indexes
+    for (let i = step; i < length; i += step) {
+      indexes.push(i);
+    }
+  
+    // Push the last index
+    indexes.push(length - 1);
+  
+    return indexes;
+  };
 Siteroute.route('/travel').post(function(req, res) {
     console.log(req.body)
-    Siteuserd.findOne({ _id: req.body._id }, function(error, admin) {
+    Siteuserd.findOne({ _id: req.body._id },async function(error, admin) {
         if (error) {
             console.log(error);
             res.send('error');
@@ -533,28 +554,34 @@ Siteroute.route('/travel').post(function(req, res) {
             if (existingContact&&req.body.coords) {
 
                 if(req.body.coords&&req.body.coords.length!==2000){
-  // Update the existing contact
   existingContact.end = req.body.end;
                 }
               
 
 
-                existingContact.coords= [...req.body.coords,...existingContact.coords];
-            } else {
-                // Push a new contact
-                admin.travel.push({
-                    coords:[],
-                    date:req.body.date,
-                    start:req.body.start,
-                    end:'-'
-
-                    
-                });
-            }
-                // Push a new contact
+               
+           if(req.body.coords.length>=10){
+            existingContact.coords= [...req.body.coords,...existingContact.coords];
+            const cf = getEquallySpacedIndexes(req.body.coords.length).map(index => req.body.coords[index]);
+           
+            console.log('sd12321321')
+            console.log(cf)
+            https.get(`https://api.mapbox.com/directions/v5/mapbox/driving/${cf.join(';')}?access_token=pk.eyJ1IjoiYXlhYW56YXZlcmkiLCJhIjoiY2ttZHVwazJvMm95YzJvcXM3ZTdta21rZSJ9.WMpQsXd5ur2gP8kFjpBo8g`, (resq) => {
+                let data = '';
               
-     
-
+                resq.on('data', (chunk) => {
+                  data += chunk;
+                });
+              
+                resq.on('end', () => {
+                  console.log(JSON.parse(data));
+                  var dat=JSON.parse(data)
+                   // Extract total distance in meters from the API response
+       const totalDistanceMeters = dat.routes[0].distance;
+    
+       // Convert distance from meters to miles
+       const totalDistanceMiles = totalDistanceMeters / 1609.34; // 1 meter ≈ 0.000621371 miles
+       existingContact.distance= totalDistanceMiles ;
             // Save the updated "Admin" document
             admin.save(function(error2, success2) {
                 if (error2) {
@@ -564,10 +591,186 @@ Siteroute.route('/travel').post(function(req, res) {
                     res.status(200).json({ 'Client': success2 });
                 }
             });
+                  // Process the received data here
+                });
+              }).on('error', (error) => {
+                console.error(`Error: ${error.message}`);
+              });
+      
+           }
+           else{
+            existingContact.distance= '0' ;
+             // Save the updated "Admin" document
+             admin.save(function(error2, success2) {
+                if (error2) {
+                 
+                    res.send('error2');
+                } else {
+                    res.status(200).json({ 'Client': success2 });
+                }
+            });
+          
+           }
+              
+          
+
+
+            } else {
+                // Push a new contact
+                admin.travel.push({
+                    coords:[],
+                    date:req.body.date,
+                    start:req.body.start,
+                    end:'-',
+                    distance:'0',
+
+                    
+                });
+                 // Save the updated "Admin" document
+            admin.save(function(error2, success2) {
+                if (error2) {
+                 
+                    res.send('error2');
+                } else {
+                    res.status(200).json({ 'Client': success2 });
+                }
+            });
+            }
+                // Push a new contact
+              
+     
+
+           
         }
     });
 });
+Siteroute.route('/updatetravel').post(function(req, res) {
+    console.log(req.body)
+    Siteuserd.findOne({ _id: req.body._id },async function(error, admin) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+        } else if (!admin) {
+            res.send('invalid');
+        } else {
+            // Check if the contact exists in the "contacts" array
+            const existingContact = admin.travel.find(contact => (contact.date === req.body.val.date&&contact.end===req.body.val.end));
+            console.log(existingContact)
+            if (existingContact&&req.body.val.coords) {
 
+                
+              
+
+
+           if(req.body.val.coords.length>=10){
+
+const cf = getEquallySpacedIndexes(req.body.val.coords.length).map(index => req.body.val.coords[index]);
+console.log('sd12321321')
+console.log(cf)
+            https.get(`https://api.mapbox.com/directions/v5/mapbox/driving/${cf.join(';')}?access_token=pk.eyJ1IjoiYXlhYW56YXZlcmkiLCJhIjoiY2ttZHVwazJvMm95YzJvcXM3ZTdta21rZSJ9.WMpQsXd5ur2gP8kFjpBo8g`, (resw) => {
+                let data = '';
+              
+                resw.on('data', (chunk) => {
+                  data += chunk;
+                });
+              
+                resw.on('end', () => {
+                 var dat=JSON.parse(data)
+                 console.log(dat)
+                   // Extract total distance in meters from the API response
+       const totalDistanceMeters = dat.routes[0].distance;
+    
+       // Convert distance from meters to miles
+       const totalDistanceMiles = totalDistanceMeters / 1609.34; // 1 meter ≈ 0.000621371 miles
+     console.log(totalDistanceMiles)
+       existingContact.distance= totalDistanceMiles ;
+       
+            // Save the updated "Admin" document
+            admin.save(function(error2, success2) {
+                if (error2) {
+                 
+                    res.send('error2');
+                } else {
+                    res.status(200).json({ 'Client': success2 });
+                }
+            });
+                  // Process the received dat here
+                });
+              }).on('error', (error) => {
+                console.error(`Error: ${error.message}`);
+              });
+      
+           }
+           else{
+            existingContact.distance= 0 ;
+           // Save the updated "Admin" document
+           admin.save(function(error2, success2) {
+            if (error2) {
+             
+                res.send('error2');
+            } else {
+                res.status(200).json({ 'Client': success2 });
+            }
+        });
+           }
+              
+          
+
+
+            }
+            
+          
+                // Push a new contact
+              
+     
+
+           
+        }
+    });
+});
+Siteroute.route('/updatetravelmiles').post(function(req, res) {
+    console.log(req.body)
+    Siteuserd.findOne({ _id: req.body._id },async function(error, admin) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+        } else if (!admin) {
+            res.send('invalid');
+        } else {
+            // Check if the contact exists in the "contacts" array
+            const existingContact = admin.travel.find(contact => (contact.date === req.body.val.date&&contact.end===req.body.val.end));
+            console.log(existingContact)
+            if (existingContact) {
+
+                
+              
+
+                existingContact.distance= req.body.distance ;
+       
+                // Save the updated "Admin" document
+                admin.save(function(error2, success2) {
+                    if (error2) {
+                     
+                        res.send('error2');
+                    } else {
+                        res.status(200).json({ 'Client': success2 });
+                    }
+                });
+              
+          
+
+
+            }
+            
+          
+                // Push a new contact
+              
+     
+
+           
+        }
+    });
+});
 Siteroute.route('/findtravel').post(function(req, res) {
     console.log(req.body)
     Siteuserd.findOne({ _id: req.body._id }, function(error, admin) {
@@ -628,6 +831,99 @@ Siteroute.route('/viewed').post(function(req, res) {
             });
         }
     });
+});
+Siteroute.route('/getdistance').post(function(req, res) {
+    const parseDate = (dateString) => {
+        const [month, day, year] = dateString.split('/');
+        return new Date(`${year}-${month}-${day}`);
+    };
+    const parseDate2 = (dateString) => {
+        const [month, day, year] = dateString.split('/');
+        return `${year}-${month}-${day}`;
+    };
+    // Function to get all the dates of the week for a given date
+
+
+       // Function to get all the dates of the week starting from Monday for a given date
+       const getWeekDates = (date) => {
+        const weekStart = new Date(date);
+        const dayOfWeek = weekStart.getDay(); // Get the day of the week (0-6, where 0 is Sunday and 6 is Saturday)
+        const diff = weekStart.getDate() - dayOfWeek+1 + (dayOfWeek === 0 ? -6 : 1); // Calculate the difference to the first day (Monday) of the week
+        weekStart.setDate(diff);
+        
+        const weekEnd = new Date(weekStart+1);
+        weekEnd.setDate(weekEnd.getDate() + 6); // Set to the last day (Sunday) of the week
+        
+        const datesOfWeek = [];
+        let currentDate = new Date(weekStart);
+        while (currentDate <= weekEnd) {
+            datesOfWeek.push(currentDate.toISOString().split('T')[0]); // Store date in 'yyyy-mm-dd' format
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        return datesOfWeek;
+    };
+
+   const { users } = req.body; // Extracting 'users' array from the request body
+const dateweek=parseDate(req.body.weekend)
+
+   // Extracting user IDs from the 'users' array
+   const userIds = users.map(user => user.id);
+  // Find users whose IDs are in the array
+  var dates=getWeekDates(dateweek).map(user =>user.toString())
+  console.log(dates)
+  Siteuserd.find({ _id: { $in: userIds } }, function(error, foundUsers) {
+    if (error) {
+        console.error(error);
+        return res.status(500).send('Internal Server Error');
+    }
+
+    // Handle the case where no users are found
+    if (!foundUsers || foundUsers.length === 0) {
+        return res.status(404).send('No users found');
+    }
+    
+var miles=[]
+foundUsers.forEach(element => {
+    var totalDistance=0
+    var dailymiles=[]
+    
+    element.travel.forEach(item => {
+        if(item&&item.date){
+
+            var date1=parseDate(item.date).toISOString().split('T')[0]
+        
+         
+            var found =dates.includes(date1)
+          
+            if(found){
+                if(item.distance){
+                    console.log(item.distance)
+                    totalDistance=totalDistance+Number(item.distance)
+                    dailymiles.push(item.distance)
+                }
+            }
+      
+                 
+                
+        }
+
+    });
+  console.log(element.name)
+    console.log(totalDistance)
+    miles.push({
+        userid:element._id,
+        miles:totalDistance,
+        dailymiles:dailymiles
+    })
+});
+
+
+    // Do something with the found users, such as sending them back in the response
+   res.status(200).json(miles);
+});
+
+
+
 });
 Siteroute.route('/add').post(function(req, res) {
 

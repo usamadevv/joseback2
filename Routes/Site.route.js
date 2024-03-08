@@ -25,7 +25,11 @@ Jobsiteroute.route('/updatesite').post(function(req, res) {
             perdiemamt: req.body.perdiemamt,
             onperdiemamt: req.body.onperdiemamt,
             user: req.body.user,
-            task:req.body.task
+            task:req.body.task,
+            perdiemmiles:req.body.perdiemmiles,
+            onperdiemmiles:req.body.onperdiemmiles,
+            perdiemamnt:req.body.perdiemamnt,
+            onperdiemamnt:req.body.onperdiemamnt,
 
             
            

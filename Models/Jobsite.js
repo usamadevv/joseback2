@@ -64,6 +64,15 @@ address: {
     onperdiemamnt:{
 
         type: String
+
+    },
+    perdiemmiles:{
+
+        type: String
+    },
+
+    onperdiemmiles:{
+        type: String
     },
     task: [{
         name: {
