@@ -5,7 +5,8 @@ const Schema = mongoose.Schema;
 
 let Siteuser = new Schema({
    
-    contacts:[{
+    contacts:
+    [{
         userid:{
             type:String,
             unique:true,
@@ -55,6 +56,19 @@ let Siteuser = new Schema({
         type: String,
         
     },
+    hrsdetails:[{
+        hrs:{
+            type:String,
+            unique:true,
+        },
+        hrsweekend:{
+            type:String,
+        },
+        hrsstatus:{
+            type:String
+        }
+       
+       }],
     cpr: {
         type: String,
         

@@ -1493,6 +1493,42 @@ console.log(req.body)
 
     
 });
+Siteroute.route('/adduserhours').post(function(req, res) {
+    var datec2=new Date()
+    var ustime2=datec2.toLocaleString("en-US", {timeZone: "America/New_York"})
+  
+    const updateData = req.body.preparedata;
+console.log(req.body)
+    // Create an array of update operations
+    const updateOperations = updateData.map(item => ({
+      updateOne: {
+        filter: { _id: item.userid }, // Assuming your ID field is named _id
+        update: { $push: { hrsdetails:
+            {hrs: Number(item.Hrs)+Number(item.Ot_Hrs),
+            hrsweekend:ustime2.split(',')[0],
+            hrsstatus:'unpaid'
+        } },
+        upsert: false, // Set to true if you want to insert a new document if the ID doesn't exist
+      },
+ } }));
+  
+    // Use bulkWrite to execute multiple update operations
+    Siteuserd.bulkWrite(updateOperations, { ordered: false }, function(error, result) {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred while updating documents' });
+      } else {
+        if (result.modifiedCount > 0) {
+          res.status(200).json({ message: `${result.modifiedCount} documents updated successfully` });
+        } else {
+          res.status(200).json({ message: 'No documents were updated' });
+        }
+      }
+    });
+    
+
+    
+});
 Siteroute.route('/updatecpr').post(function(req, res) {
     Siteuserd.findOneAndUpdate(
         { _id:req.body.id}, 
