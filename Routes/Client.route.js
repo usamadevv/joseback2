@@ -5,14 +5,9 @@ const Clientroute = express.Router();
 let Client = require('../Models/Cleint');
 var nodemailer = require('nodemailer');
 const fs = require('fs');
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'saleemjadoon7666@gmail.com',
-        pass: 'qjuljgycnglhkkmv'
-    }
-});
+
 const path = require('path');
+const Email = require('../Models/Email');
 
 
 Clientroute.route('/update2').post(function(req, res) {
@@ -446,23 +441,63 @@ console.log(req.body)
                 console.error(err);
                 res.status(500).json({ error: 'Failed to save invoice' });
             } else {
-                const mailOptions = {
-                    from: 'Company invoice', // sender address
-                    to: req.body.email, // list of receivers
-                    subject: `New invoice received`, // Subject line
-                    html: `<a href='https://thumbffice.netlify.app/file/${req.body.key}'>View Invoice</a>`// plain text body
-                };
+
+
+                Email.findOne(
+                    { }, 
+                
+                   
+                
+                   function (error, result) {
+                         if (error) {
+                            res.send('error')
+                         } else {
+                            if(!result){
+                
+                                res.send('invalid')
+                            }
+                            else{
+                                var transporter = nodemailer.createTransport({
+                                    service: 'gmail',
+                                    auth: {
+                                        user: result.email,
+                                        pass: result.pass
+                                    }
+                                });
             
-                transporter.sendMail(mailOptions, function (err, info) {
-                    if(err){
-                        console.log(err)
-                            res.status(200).json({'Siteuserd':'fail'});}
-                    else{
-                        console.log(info);
-                        
-                res.status(200).json({'Siteuserd':'emailok'});}
-                })
-                res.json({ message: 'Invoice saved successfully' });
+                              
+                                
+                                const mailOptions = {
+                                    from: 'Company invoice', // sender address
+                                    to: req.body.email, // list of receivers
+                                    subject: `New invoice received`, // Subject line
+                                    html: `<a href='https://thumbffice.netlify.app/file/${req.body.key}'>View Invoice</a>`// plain text body
+                                };
+                            
+                                transporter.sendMail(mailOptions, function (err, info) {
+                                    if(err){
+                                        console.log(err)
+                                            res.status(200).json({'Siteuserd':'fail'});}
+                                    else{
+                                        console.log(info);
+                                        
+                                res.status(200).json({'Siteuserd':'emailok'});}
+                                })
+                                res.json({ message: 'Invoice saved successfully' });
+
+
+                                console.log(result)
+                
+                            }
+                            
+                         }
+                     }
+                
+                  
+                )
+
+                
+          
             }
         });
  

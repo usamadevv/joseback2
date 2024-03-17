@@ -16,15 +16,11 @@ var bucket = admin.storage().bucket();
 
 let Siteuserd = require('../Models/Siteuser');
 var nodemailer = require('nodemailer');
+const Email = require('../Models/Email');
 
 app.use(fileUpload())
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'saleemjadoon7666@gmail.com',
-        pass: 'qjuljgycnglhkkmv'
-    }
-});
+
+
 
 
   Siteroute.route('/uploadfile').post(function(req, res) {
@@ -1191,6 +1187,7 @@ Siteroute.route('/login').post(function(req, res) {
 
 Siteroute.route('/reset').post(function(req, res) {
     console.log(req.body)
+   
     Siteuserd.find(
         {email:req.body.email
         },
@@ -1206,22 +1203,58 @@ Siteroute.route('/reset').post(function(req, res) {
                 else{
                  if(success.length>0){
                     console.log(success)
-                    const mailOptions = {
-                        from: 'Password Reset', // sender address
-                        to: req.body.email, // list of receivers
-                        subject: `Password Reset`, // Subject line
-                        html: `<h1>Your Otp for password reset is  ${req.body.otp}.</h1>`// plain text body
-                    };
+
+                    Email.findOne(
+                        { }, 
                     
-                    transporter.sendMail(mailOptions, function (err, info) {
-                        if(err){
-                            console.log(err)
-                                res.status(200).json({'Siteuserd':'fail'});}
-                        else{
-                            console.log(info);
-                            
-                    res.status(200).json({'Siteuserd':'emailok'});}
-                    })
+                       
+                    
+                       function (error, result) {
+                             if (error) {
+                                res.send('error')
+                             } else {
+                                if(!result){
+                    
+                                    res.send('invalid')
+                                }
+                                else{
+                                    var transporter = nodemailer.createTransport({
+                                        service: 'gmail',
+                                        auth: {
+                                            user: result.email,
+                                            pass: result.pass
+                                        }
+                                    });
+                
+                                  
+                                    
+                                    const mailOptions = {
+                                        from: 'Password Reset', // sender address
+                                        to: req.body.email, // list of receivers
+                                        subject: `Password Reset`, // Subject line
+                                        html: `<h1>Your Otp for password reset is  ${req.body.otp}.</h1>`// plain text body
+                                    };
+                              
+                               
+                                    transporter.sendMail(mailOptions, function (err, info) {
+                                        if(err){
+                                            console.log(err)
+                                                res.status(200).json({'Siteuserd':'fail'});}
+                                        else{
+                                            console.log(info);
+                                            
+                                    res.status(200).json({'Siteuserd':'emailok'});}
+                                    })
+                                    console.log(result)
+                    
+                                }
+                                
+                             }
+                         }
+                    
+                      
+                    )
+                  
                  }
                  else{
                     

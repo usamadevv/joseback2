@@ -8,15 +8,9 @@ const path = require('path');
 const date = require('date-and-time');
 
 var nodemailer = require('nodemailer');
+const Email = require('../Models/Email');
 
 
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'saleemjadoon766@gmail.com',
-        pass: 'zyhqnhmthrzgbeys'
-    }
-});
 
 
 Invoiceroute.route('/saveinvoice').post(function (req, res)  {
@@ -28,7 +22,32 @@ Invoiceroute.route('/saveinvoice').post(function (req, res)  {
             console.error(err);
             res.status(500).json({ error: 'Failed to save invoice' });
         } else {
-            const mailOptions = {
+
+            Email.findOne(
+                { }, 
+            
+               
+            
+               function (error, result) {
+                     if (error) {
+                        res.send('error')
+                     } else {
+                        if(!result){
+            
+                            res.send('invalid')
+                        }
+                        else{
+                            var transporter = nodemailer.createTransport({
+                                service: 'gmail',
+                                auth: {
+                                    user: result.email,
+                                    pass: result.pass
+                                }
+                            });
+        
+                          
+                            
+                          const mailOptions = {
                 from: 'Password Reset', // sender address
                 to: req.body.email, // list of receivers
                 subject: `You recieved a report`, // Subject line
@@ -45,6 +64,17 @@ Invoiceroute.route('/saveinvoice').post(function (req, res)  {
             res.status(200).json({'Siteuserd':'emailok'});}
             })
             res.json({ message: 'Invoice saved successfully' });
+                            console.log(result)
+            
+                        }
+                        
+                     }
+                 }
+            
+              
+            )
+
+           
         }
     });
 });

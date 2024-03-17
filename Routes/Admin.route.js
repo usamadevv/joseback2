@@ -5,15 +5,10 @@ const Adminroute = express.Router();
 let Admin = require('../Models/Admin');
 const date = require('date-and-time');
 var nodemailer = require('nodemailer');
+const Email = require('../Models/Email');
 
 
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'saleemjadoon7666@gmail.com',
-        pass: 'qjuljgycnglhkkmv'
-    }
-});
+
 // Your AccountSID and Auth Token from console.twilio.com
 const accountSid = 'ACa5a38c062d3546c2e2fd9e3f42530c78';
 const authToken = '68264670a0b5a32860ef2a2b672b359a';
@@ -431,8 +426,30 @@ Adminroute.route('/sendotp').post(function(req, res) {
     console.log(req.body)
   
         
+    Email.findOne(
+        { }, 
     
-                
+       
+    
+       function (error, result) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!result){
+    
+                    res.send('invalid')
+                }
+                else{
+                    var transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: result.email,
+                            pass: result.pass
+                        }
+                    });
+
+                  
+                    
                     const mailOptions = {
                         from: 'Password Reset', // sender address
                         to: req.body.email, // list of receivers
@@ -449,6 +466,19 @@ Adminroute.route('/sendotp').post(function(req, res) {
                             
                     res.status(200).json({'Admin':'emailok'});}
                     })
+                 
+
+                    console.log(result)
+    
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+                
                  
                 
                  
@@ -477,22 +507,59 @@ Adminroute.route('/reset').post(function(req, res) {
                 else{
                  if(success.length>0){
                     console.log(success)
-                    const mailOptions = {
-                        from: 'Password Reset', // sender address
-                        to: req.body.email, // list of receivers
-                        subject: `Password Reset`, // Subject line
-                        html: `<h1>Your Otp for password reset is  ${req.body.otp}.</h1>`// plain text body
-                    };
+
+                    Email.findOne(
+                        { }, 
                     
-                    transporter.sendMail(mailOptions, function (err, info) {
-                        if(err){
-                            console.log(err)
-                                res.status(200).json({'Admin':'fail'});}
-                        else{
-                            console.log(info);
-                            
-                    res.status(200).json({'Admin':'emailok'});}
-                    })
+                       
+                    
+                       function (error, result) {
+                             if (error) {
+                                res.send('error')
+                             } else {
+                                if(!result){
+                    
+                                    res.send('invalid')
+                                }
+                                else{
+                                    var transporter = nodemailer.createTransport({
+                                        service: 'gmail',
+                                        auth: {
+                                            user: result.email,
+                                            pass: result.pass
+                                        }
+                                    });
+                
+                                  
+                                    
+                                    const mailOptions = {
+                                        from: 'Password Reset', // sender address
+                                        to: req.body.email, // list of receivers
+                                        subject: `Password Reset`, // Subject line
+                                        html: `<h1>Your Otp for password reset is  ${req.body.otp}.</h1>`// plain text body
+                                    };
+                                    
+                                    transporter.sendMail(mailOptions, function (err, info) {
+                                        if(err){
+                                            console.log(err)
+                                                res.status(200).json({'Admin':'fail'});}
+                                        else{
+                                            console.log(info);
+                                            
+                                    res.status(200).json({'Admin':'emailok'});}
+                                    })
+                                    console.log(result)
+                    
+                                }
+                                
+                             }
+                         }
+                    
+                      
+                    )
+    
+                    
+                   
                  }
                  else{
                     
