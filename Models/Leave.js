@@ -11,6 +11,11 @@ let Leave = new Schema({
         
     }
     ,
+    leavetype: {
+        type: String,
+        
+    }
+    ,
     username:{
         type:String,
     },

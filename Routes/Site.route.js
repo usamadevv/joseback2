@@ -4,6 +4,7 @@ const app = express();
 const Jobsiteroute = express.Router();
 let Jobsite = require('../Models/Jobsite');
 var nodemailer = require('nodemailer');
+const SiteUserd = require('../Models/Siteuser');
 
 
 Jobsiteroute.route('/updatesite').post(function(req, res) {
@@ -269,9 +270,75 @@ Jobsiteroute.route('/find').post(function(req, res) {
 
     
 });
+Jobsiteroute.route('/findusers').post(function(req, res) {
+    Jobsite.findOne(
+        { _id:req.body.siteid}, 
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+var usersa=[]
+success.user.forEach(element => {
+    usersa.push(element.userid)
+
+});
+
+SiteUserd.find(
+    { _id:{ $in: usersa }}, 
+
+   function (error, users) {
+         if (error) {
+            res.send('error')
+         } else {
+            if(!users){
+
+                res.send('invalid')
+            }
+            else{
+
+
+
+console.log(users)
+const response = users.map(user => ({
+    name: user.name,
+    _id: user._id,
+    skill: user.skill,
+    imgurl: user.imgurl? user.imgurl:null,
+
+
+}));
+
+                res.status(200).json({'Jobsite':response});
+            }
+            
+         }
+     }
+
+  
+)
+
+
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 
 
 Jobsiteroute.route('/findbycompany').post(function(req, res) {
+
     Jobsite.find(
         { clientid:req.body.clientid}, 
     

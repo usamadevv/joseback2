@@ -252,6 +252,39 @@ Siteroute.route('/update').post(function(req, res) {
 
     
 });
+Siteroute.route('/updatesupersite').post(function(req, res) {
+
+    Siteuserd.findByIdAndUpdate(
+        { _id:req.body._id}, 
+
+        {
+            supersite:req.body.supersite,
+          
+
+        },
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteuserd':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 
 
 Siteroute.route('/notify').post(function(req, res) {

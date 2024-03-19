@@ -101,17 +101,42 @@ app.use('/api/email',Emailroute  );
 
 
 const server = http.createServer(app);
+
 const io = new Server(server, {
-    cors: { origin: "https://thumbffice.com", methods: ["GET", "POST"] },
+    cors: { origin: "http://localhost:3001", methods: ["GET", "POST"] },
   });
 const userRooms = {};
 
 const emailToSocketIdMap = new Map();
 const socketidToEmailMap = new Map();
-
+var activeConnections = [];
 io.on("connection", (socket) => {
   console.log(`Socket Connected`, socket.id);
-  socket.on("room:join", (data) => {
+  io.to(socket.id).emit('message', socket.id);
+
+  socket.on('login', (userid) => {
+    
+  activeConnections.push({
+    userid:userid.userid,
+    id:userid.socketid,
+  })
+    console.log(`User ${userid} logged in`);
+    console.log(activeConnections)
+});
+socket.on('newmessage', (userid) => {
+    console.log(userid)
+
+  var tempconn=activeConnections.find(val=>val.userid===userid)
+
+   io.to(tempconn.id).emit('newmessage','new')
+});
+socket.on('disconnect', () => {
+ const ft= activeConnections.filter(val=>val.id!==socket.id)
+ activeConnections=ft
+  console.log('User disconnected');
+  console.log(activeConnections)
+});
+  /*socket.on("room:join", (data) => {
     
     const { email, room,sender } = data;
     emailToSocketIdMap.set(email, socket.id);
@@ -143,15 +168,18 @@ io.on("connection", (socket) => {
   socket.on("peer:nego:done", ({ to, ans }) => {
     console.log("peer:nego:done", ans);
     io.to(to).emit("peer:nego:final", { from: socket.id, ans });
-  });
+  });*/
+
 });
 
-
+server.listen(3000, () => {
+  console.log('Socket.IO server is running on port 3000');
+});
 app.get('*',(req,res)=>{
     res.sendFile( path.resolve(__dirname,'./myapp','build','index.html'))
 
 })
 
-server.listen(PORT, function() {
+app.listen(PORT, function() {
     console.log("Server is running on Port: " + PORT);
 });

@@ -5,6 +5,7 @@ const Siteattroute = express.Router();
 let Siteatt = require('../Models/siteatt');
 var nodemailer = require('nodemailer');
 const date = require('date-and-time');
+const SiteUserd = require('../Models/Siteuser');
 
 
 
@@ -249,14 +250,45 @@ wages:req.body.wages
 Siteattroute.route('/add').post(function(req, res) {
 
     let Siteatts = new Siteatt(req.body);
+
     Siteatts.save()
         .then(Siteatt => {
-            res.status(200).json({'Siteatt': 'Siteatt added successfully'});
+
+            
+              SiteUserd.findOneAndUpdate(
+        { _id:req.body.userid},
+        {supersite:req.body.projectid,
+
+        } ,
+    
+       function (error2, success2) {
+             if (error2) {
+                res.send('error')
+             } else {
+                if(!success2){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteatt': 'Siteatt added successfully'});
+                
+                }
+                
+             }
+         }
+    
+      
+    )
+
+            
             
         })
         .catch(err => {
             console.log(err)
           console.log("erer")
+
+
         });
 });
 
