@@ -693,6 +693,42 @@ Siteattroute.route('/fromto').post(function(req, res) {
 
     
 });
+Siteattroute.route('/findbycrew').post(function(req, res) {
+    console.log(req.body)
+  
+    const selectedusers = req.body.id || [];
+    const projectIds = selectedusers.map(site => site._id);
+
+    Siteatt.find(
+        { 
+            
+              userid: {
+                $in: projectIds,
+              },
+        }, 
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteatt':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 Siteattroute.route('/findcattuser').post(function(req, res) {
     Siteatt.find(
         { date:req.body.date,

@@ -1103,7 +1103,53 @@ Siteroute.route('/find').post(function(req, res) {
 
     
 });
+Siteroute.route('/superbycom').post(function(req, res) {
+    Siteuserd.find(
+        {
+    _id:req.body.id
+    }, 
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+Siteuserd.find({
+    supermode:'true',
+    clientid:success[0].clientid
+},     function (error2, success2) {
+    if (error2) {
+       res.send('error')
+    } else {
+       if(!success2){
+
+           res.send('invalid')
+       }
+       else{
+
+console.log(success)
+           res.status(200).json({'Siteuserd':success2});
+       }
+       
+    }
+})
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 Siteroute.route('/super').get(function(req, res) {
+    
     Siteuserd.find(
         {supermode:'true'}, 
     
