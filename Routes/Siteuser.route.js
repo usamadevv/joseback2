@@ -527,12 +527,15 @@ Siteroute.route('/adduser').post(function(req, res) {
                 existingContact.unseen += req.body.unseen;
                 existingContact.timestamp = Date.now();
                 existingContact.usertype = 'user';
+
+                existingContact.msg = req.body.msg;
             } else {
                 // Push a new contact
                 admin.contacts.push({
                     userid: req.body.user,
                     unseen: req.body.unseen,
-                    usertype : 'user'
+                    usertype : 'user',
+                    msg:req.body.msg
                 });
             }
 
@@ -1203,8 +1206,34 @@ Siteroute.route('/findone').post(function(req, res) {
 
     
 });
+Siteroute.route('/findbycompany').post(function(req, res) {
+    Siteuserd.find(
+        {clientid:req.body.clientid}, 
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
 
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteuserd':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 Siteroute.route('/findbyname').post(function(req, res) {
+
     Siteuserd.find(
         {name:req.body.name}, 
     

@@ -13,6 +13,10 @@ let Admin = new Schema({
         type:String,
     
     },
+    msg:{
+        type:String,
+     
+    }, 
     
     unseen:{
         type:Number,

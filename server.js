@@ -103,7 +103,7 @@ app.use('/api/email',Emailroute  );
 const server = http.createServer(app);
 
 const io = new Server(server, {
-    cors: { origin: "http://localhost:3001", methods: ["GET", "POST"] },
+    cors: { origin: "*", methods: ["GET", "POST"] },
   });
 const userRooms = {};
 
@@ -123,12 +123,12 @@ io.on("connection", (socket) => {
     console.log(`User ${userid} logged in`);
     console.log(activeConnections)
 });
-socket.on('newmessage', (userid) => {
-    console.log(userid)
+socket.on('newmessage', ({activeid,msg,from}) => {
+    console.log(activeid)
 
-  var tempconn=activeConnections.find(val=>val.userid===userid)
+  var tempconn=activeConnections.find(val=>val.userid===activeid)
 
-   io.to(tempconn.id).emit('newmessage','new')
+   io.to(tempconn.id).emit('newmessage',{activeid,msg,from})
 });
 socket.on('disconnect', () => {
  const ft= activeConnections.filter(val=>val.id!==socket.id)
@@ -172,14 +172,12 @@ socket.on('disconnect', () => {
 
 });
 
-server.listen(3000, () => {
-  console.log('Socket.IO server is running on port 3000');
-});
+
 app.get('*',(req,res)=>{
     res.sendFile( path.resolve(__dirname,'./myapp','build','index.html'))
 
 })
 
-app.listen(PORT, function() {
+server.listen(PORT, function() {
     console.log("Server is running on Port: " + PORT);
 });

@@ -8,7 +8,12 @@ let Sueprvisor = new Schema({
         userid:{
             type:String,
       
-        },  unseen:{
+        }, 
+        msg:{
+            type:String,
+         
+        }, 
+        unseen:{
             type:Number,
          
         },  usertype:{

@@ -19,6 +19,10 @@ let Siteuser = new Schema({
             type:Number,
          
         }, 
+        msg:{
+            type:String,
+         
+        }, 
         
         timestamp: {
             type: Date,

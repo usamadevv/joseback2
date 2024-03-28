@@ -140,6 +140,7 @@ Supervisorroute.route('/adduser').post(function(req, res) {
                 existingContact.unseen += req.body.unseen;
                 existingContact.timestamp = Date.now();
                 existingContact.usertype = 'super';
+                existingContact.usertype = re.body.msg;
             } else {
                 console.log(admin)
                 // Push a new contact
@@ -147,6 +148,7 @@ Supervisorroute.route('/adduser').post(function(req, res) {
                     userid: req.body.user,
                     unseen: req.body.unseen,
                     usertype :'super',
+                    msg:req.body.msg
                 });
             }
 
